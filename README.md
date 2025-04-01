@@ -5,8 +5,8 @@
 This project is designed to help students study the concept and the implementation of “Learned Index” by understanding a base implementation and using one or more ideas to improve it.
 The key idea for “learned index” is that we think of the index as a model that predicts the position of a key in a dataset.  Thus, a learned index can be trained.  Learned indexes typically beat the traditional B+tree by a large factor in both search time and memory footprint.  
 
-We will provide you with the implementations of Dynamic PGM in C++ and B+tree, and evaluation datasets.  You are required to:
-1. Learn the code base and run it to compare with B+tree on both lookups and insertions
+We will provide you with the implementations of Dynamic PGM, B+tree and LIPP in C++, and evaluation datasets.  You are required to:
+1. Learn these indexes through the codebase, and compare their lookup and insert performance.
 2. Improve the Dynamic PGM using a suggested idea or your own ideas.  
 You are required to submit your implementation and a concise report about your project before the Dean’s date.
 
