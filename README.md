@@ -88,7 +88,7 @@ First, to familiarize yourself with the codebase, we provide a set of toy experi
    
    In `generate_workloads.sh`, we are generating the following four workloads for each dataset (We generate 2M operations for all workloads):
    1. **Lookup-only workload** with `--negative-lookup-ratio 0.5`, i.e, 1M of positive lookup, 1M of negative lookup
-   2. **Insert-Lookup workload** with `--insert-ratio 0.5`, `--negative-lookup-ratio 0.5`, i.e., 1M of insertion, 0.5M of positive lookup, 0.5M of negative lookup. In this workload, we first to 1M of insertion, then do 1M of lookup, and the output csv file contains `lookup-throughput` and `insert-throughput`
+   2. **Insert-Lookup workload** with `--insert-ratio 0.5`, `--negative-lookup-ratio 0.5`, i.e., 1M of insertion, 0.5M of positive lookup, 0.5M of negative lookup. In this workload, we first do 1M of insertion, then do 1M of lookup, and the output csv file contains `lookup-throughput` and `insert-throughput`
    3. **Mixed Insert-Lookup workload** with `--insert-ratio 0.9`, `--negative-lookup-ratio 0.5`, i.e., 1.8M of insertion, 1M of positive lookup, 1M of negative lookup. In this workload, the insert and lookup operations are mixed. Therefore, the output csv file only contains the average `throughput` for this hybrid workload.
    4. **Mixed Insert-Lookup workload** with `--insert-ratio 0.1`, `--negative-lookup-ratio 0.5`, i.e., 2M of insertion, 9M of positive lookup, 9M of negative lookup. In this workload, the insert and lookup operations are mixed. Therefore, the output csv file only contains the average `throughput` for this hybrid workload.
 4. `build_benchmark.sh`: Generate executable file for benchmark.
