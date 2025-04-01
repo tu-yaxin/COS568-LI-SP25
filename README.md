@@ -131,7 +131,7 @@ To implement the hybrid approach, refer to `competitors/dynamic_pgm_index.h` as 
 
 Within these files, you will invoke both LIPP and DPGM. The main challenge is creating an efficient migration strategy. Once you have done so, you can replicate or modify scripts/minimal/ pipeline such that it is tailored for only using the Facebook dataset and the two mixed workloads (insertion heavy and lookup heavy), to build and run benchmarks for your new hybrid approach.
 
-# Task 3 (TBD)
+# (Optional) Task 3 (TBD)
 
 # Deliverables
 A brief report in PDF format (filename: \$NetID\$\_\$firstname\$\_\$lastname\$.pdf) and the code for the project. Please compress your source code into a .zip file and upload it to Canvas.
@@ -139,7 +139,6 @@ A brief report in PDF format (filename: \$NetID\$\_\$firstname\$\_\$lastname\$.p
 In the report, provide any implementation details (hardware configs, dataset size, repetition time) for all the tasks. Each experiment should run 3 times and report the average value. Include the following content:
 
 Task 1: Report the lookup and insertion performance on B+ Tree, LIPP, and DynamicPGM on three datasets (Facebook, Books, and Osmc) and show your results in barplots. Briefly explain your observations.
-
 
 Task 2: Report the details on how you implement the hybrid index of LIPP and Dynamic PGM, and compare the lookup and insertion performance on your modified index using the same configuration in Task 1. Compare it with the B+Tree, Dynamic PGM and LIPP, explain the difference.
 
