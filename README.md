@@ -63,8 +63,8 @@ LIPP, a learned index (See: [Updatable Learned Index with Precise Positions](htt
 
 
 # Setup
-1. We recommend running this project onthe  Adroit cluster, in which you can have a 100GB quota to store your data and repository. See [this page](https://researchcomputing.princeton.edu/systems/adroit#How-to-Access-the-Adroit-Cluster) for details on getting access to Adroit. (If you have access to Della, you don't have to request an account for Adroit and can run experiments on Della)
-2. After log into Adroit, clone this repo and use `module load anaconda3/2023.3` to initialize the python environment.
+1. We recommend running this project on the  Adroit cluster, in which you can have a 100GB quota to store your data and repository. See [this page](https://researchcomputing.princeton.edu/systems/adroit#How-to-Access-the-Adroit-Cluster) for details on getting access to Adroit. (If you have access to Della, you don't have to request an account for Adroit and can run experiments on Della. When applying for Adroit, please mention "For running experiments in COS568" in your application.)
+2. After logging into Adroit, clone this repo and use `module load anaconda3/2023.3` to initialize the python environment.
 3. You can use `checkquota` to check your storage quota. The quota contains two parts: 
    1. 10GB quota for your home directory (`/home/<your_net_id>`), and 
    2. 100GB quota for `/scratch/network/<your_net_id>`. We recommend running your experiments under `/scratch/network/<your_net_id>`.
