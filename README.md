@@ -112,6 +112,16 @@ Also, you will find that for each experiment of DynamicPGM and B+Tree, we actual
 
 # Task 2. Hybrid Dynamic PGM and LIPP
 
+=========
+
+
+We provided a script for prediction error analysis, see `scripts/run_benchmarks_pred_error.sh`. The script is similar to `scripts/run_benchmarks.sh`, the key difference is we change the benchmark arguments from `--through` to `--error`. Besides, the interpretation of the values in the output CSV file differs slightly, we explain as below:
+1. `*_op_latency_ns`: The statistical information (Average, P50, P99, P99.9, Max, Std) on the latency per operation in nanaseconds.
+2. `avg_pos_search_overhead`: Average overhead needed to the position search.
+3. `pos_search_latency_ns`: Average position search time in nanoseconds.
+4. `avg_pred_error`: Average prediction error. When evaluating the prediction error, you only need to report this value.
+
+=========
 
 DynamicPGM is more efficient for amortized insertion, while LIPP is more efficient for lookups. We want to design a hybrid strategy that uses DynamicPGM (DPGM) for insertion and relies on the LIPP index for the majority of lookups. The high-level idea is that whenever DPGM reaches a certain size threshold (for example, 5 percent of the total keys), we flush or migrate data from DPGM into LIPP. During the bulk loading phase, data is initially placed into LIPP. We then perform lookups in the (smaller) DPGM, and if an item is not found there, we check the LIPP index. The main concern is that flushing data from DPGM to LIPP (for example, every few million keys) could be expensive, which might defeat the advantages of combining these two approaches.
 
