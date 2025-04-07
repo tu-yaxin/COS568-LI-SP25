@@ -74,7 +74,7 @@ LIPP, a learned index (See: [Updatable Learned Index with Precise Positions](htt
    3. `/scripts` contains the scripts for building the benchmark, generating workload, and result analysis.
 
 
-# Task 1. Evaluate Lookup and Insertion performance of B+ Tree, Dynamic PGM, and LIPP (Due 4.7)
+# Task 1. Evaluate Lookup and Insertion performance of B+ Tree, Dynamic PGM, and LIPP (10% of Points)
 
 First, to familiarize yourself with the codebase, we provide a set of toy experiments in `scripts/`. All you need to do is execute `scripts/run_all.sh` and understand the structure of the codebase through these scripts. The scripts include:
 1. `download_dataset.sh`: Download dataset to `./data`
@@ -106,18 +106,18 @@ After running all the scripts, you can get the results in `results/*.csv`. We ev
 In the csv file inside `./results`, for each experiment, we repeat 3 times (by adding `-r 3` in `run_benchmarks.sh`), so you will find three throughput values for each line.
 Also, you will find that for each experiment of DynamicPGM and B+Tree, we actually generate three lines of data with different search methods (See Section 3.1 in TLI paper) and values, this is because each index has some hyperparameters. For B+ Tree, the hyperparameters include the `search_method` and `max_node_logsize` (corresponds to `value`, which specifies the maximum node size). For PGM, the hyperparameters include `search_method` and `error_bound` (corresponds to `value`, which specifies the maximum allowed approximation error $\epsilon$. A larger $\epsilon$ usually results in faster bulk loading, but also sacrifices the lookup accuracy. See Figure 2 in the PGM paper). For LIPP, we don’t have hyperparameters so the `search_method` and `value` are left empty. For the indexes with different hyperparameters, you only need to pick on that has the highest average throughput.
 
-**Task Requirement:** Compare the Lookup and Insertion average throughput (across 3 runs) among B+Tree, Dynamic PGM, and LIPP. Explain why we can observe such a difference. **It will take ~30mins to run the script.**
+**MileStone1 (Due 4.7):** Compare the Lookup and Insertion average throughput (across 3 runs) among B+Tree, Dynamic PGM, and LIPP. Explain why we can observe such a difference. **It will take ~30mins to run the script.**
 
 
 
-# Task 2. Hybrid Dynamic PGM and LIPP
+# Task 2. Hybrid Dynamic PGM and LIPP (90% of Points)
 
 
 DynamicPGM is more efficient for amortized insertion, while LIPP is more efficient for lookups. We want to design a hybrid strategy that uses DynamicPGM (DPGM) for insertion and relies on the LIPP index for the majority of lookups. The high-level idea is that whenever DPGM reaches a certain size threshold (for example, 5 percent of the total keys), we flush or migrate data from DPGM into LIPP. During the bulk loading phase, data is initially placed into LIPP. We then perform lookups in the (smaller) DPGM, and if an item is not found there, we check the LIPP index. The main concern is that flushing data from DPGM to LIPP (for example, every few million keys) could be expensive, which might defeat the advantages of combining these two approaches.
 
 The second part of this assignment is more open-ended. You are encouraged to propose a creative migration or flushing strategy that can make this process more efficient so that the hybrid approach offers better throughput for mixed workloads than either DPGM or LIPP alone. The challenge is that these indexes have different tree structures: DPGM uses recursive models, while LIPP uses precise positions and conflict-based node creation. LIPP's no error requirement means you cannot directly map from DPGM's approximate models. Furthermore, collecting data from DPGM and inserting it into LIPP could be very costly, and the current LIPP implementation does not support bulk loading if the index already contains data.
 
-One possible solution is to perform the migration process asynchronously, preventing disruption to incoming insertions and lookups. Of course, there may be other strategies worth exploring. You should also perform a hyperparameter sweep to determine how frequently these migrations should occur, accounting for different workload distributions. If the workload is heavily oriented toward lookups, it may not be beneficial to flush data too frequently. Ultimately, you will produce two bar plots only for the Facebook datasets for these workloads, with the y-axis representing throughput:
+One possible solution is to perform the migration process asynchronously, preventing disruption to incoming insertions and lookups. Of course, there may be other strategies worth exploring. You should also perform a hyperparameter sweep to determine how frequently these migrations should occur, accounting for different workload distributions. If the workload is heavily oriented toward lookups, it may not be beneficial to flush data too frequently. Ultimately, you will produce two bar plots on Facebook/Books/Osmc datasets for these workloads, with the y-axis representing throughput:
 
 - Mixed (90 percent Lookup, 10 percent Insertion): [DPGM, LIPP, HYBRID]
 - Mixed (10 percent Lookup, 90 percent Insertion): [DPGM, LIPP, HYBRID]
@@ -131,7 +131,13 @@ To implement the hybrid approach, refer to `competitors/dynamic_pgm_index.h` as 
 
 Within these files, you will invoke both LIPP and DPGM. The main challenge is creating an efficient migration strategy. Once you have done so, you can replicate or modify scripts/minimal/ pipeline such that it is tailored for only using the Facebook dataset and the two mixed workloads (insertion heavy and lookup heavy), to build and run benchmarks for your new hybrid approach.
 
-# (Optional) Task 3 (TBD)
+**MileStone 2 (30% of Points. Due 4.18):** Implement the naive hybrid DPGM + LIPP approach. It does not necessarily have to be faster than the baselines. Compare the mixed workload performance among the hybrid approach, DPGM, and LIPP. Provide a 1-2 page report with bar plots of the throughput on two mixed workload mentioned above. 
+
+**MileStone 3 (60% of Points. Due Dean's Date):** Based on the hybrid approach implemented in Milestone 2, propose your own flushing and migration to improve its performance. Compare the mixed workload performance among the improved hybrid approach, DPGM, and LIPP. Provide a 1-2 page report with bar plots of the throughput on two mixed workload mentioned above.
+
+# (Optional) Task 3: Different data fitting model in PGM
+
+In original PGM algorithtm, we use linear model to do prediction. In this task, we ask you to explore different prediction models (i.e., non linear models) and analyze how differetent data fitting models will affect the lookup throughput. You only need to implement one differeten data fitting model in this task. You'll get bonus points if you finished this task.
 
 # Deliverables
 A brief report in PDF format (filename: \$NetID\$\_\$firstname\$\_\$lastname\$.pdf) and the code for the project. Please compress your source code into a .zip file and upload it to Canvas.
@@ -142,4 +148,4 @@ Task 1: Report the lookup and insertion performance on B+ Tree, LIPP, and Dynami
 
 Task 2: Report the details on how you implement the hybrid index of LIPP and Dynamic PGM, and compare the lookup and insertion performance on your modified index using the same configuration in Task 1. Compare it with the B+Tree, Dynamic PGM and LIPP, explain the difference.
 
-Task 3 (Optional): TBD
+Task 3 (Optional): Report the details on how you implement the different data fitting model in PGM and compare the lookup throughtput with the vanilla PGM index. Briefly explain your observations.
