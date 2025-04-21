@@ -12,8 +12,10 @@ chmod +x scripts/*.sh
 echo "Step 1: Downloading dataset..."
 ./scripts/download_dataset.sh
 
-echo "Step 2: Creating minimal CMakeLists.txt..."
-./scripts/create_minimal_cmake.sh
+# Don't create a new CMAKE list.######
+#echo "Step 2: Creating minimal CMakeLists.txt..."
+#./scripts/create_minimal_cmake.sh
+#####################################
 
 echo "Step 3: Generating lookup workloads..."
 ./scripts/generate_workloads.sh

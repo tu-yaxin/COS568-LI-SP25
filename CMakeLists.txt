@@ -28,8 +28,9 @@ endif ()
 
 set(SOURCE_FILES util.h)
 
-# We only include what we need for DynamicPGM, B+Tree
+# Added hybrid. 
 set(BENCH_SOURCES
+    "benchmarks/benchmark_hybrid_pgm_lipp.cc"
     "benchmarks/benchmark_dynamic_pgm.cc"
     "benchmarks/benchmark_pgm.cc"
     "benchmarks/benchmark_lipp.cc"
