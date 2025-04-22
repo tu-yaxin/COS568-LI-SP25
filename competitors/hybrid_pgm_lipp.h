@@ -17,13 +17,13 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
     public:
         DynamicPGM<KeyType, SearchClass, pgm_error> pgm;
         Lipp<KeyType> lipp;
-        HybridPGMLipp(const std::vector<int>& params) : pgm(params), lipp(params) {}
+        HybridPGMLipp(const std::vector<int>& params) : params_(params), pgm(params), lipp(params) {}
 
         uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t num_threads) {
             total_size = data.size();
             buffer.reserve(0.05 * total_size);
             buffer.clear();
-            pgm = decltype(pgm)(params);  //empty pgm
+            pgm = decltype(pgm)(params_);  //empty pgm
             uint64_t build_time_lipp = lipp.Build(data, num_threads);
 
             return build_time_lipp;
@@ -57,7 +57,7 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
             }
             std::cout << "111111111111111" << std::endl;
             buffer.clear();
-            pgm = decltype(pgm)(params); 
+            pgm = decltype(pgm)(params_); 
             pgm_size = 0;
         }
     }
@@ -76,6 +76,7 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
 private:
     size_t pgm_size = 0, total_size;
+    std::vector<int> params_;
     std::vector<KeyValue<KeyType>> buffer;
 };
 
