@@ -16,6 +16,7 @@ template <class KeyType, class SearchClass, size_t pgm_error>
 class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
     public:
         DynamicPGM<KeyType, SearchClass, pgm_error> pgm;
+        Lipp<KeyType> lipp;
         HybridPGMLipp(const std::vector<int>& params) : pgm(params), lipp(params) {}
 
         uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t num_threads) {

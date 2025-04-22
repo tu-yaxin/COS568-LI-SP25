@@ -12,7 +12,7 @@ chmod +x scripts/*.sh
 echo "Step 1: Downloading dataset..."
 ./scripts/download_dataset.sh
 
-# Don't create a new CMAKE list.######
+# Task 2: Don't create a new CMAKE list.######
 #echo "Step 2: Creating minimal CMakeLists.txt..."
 #./scripts/create_minimal_cmake.sh
 #####################################
