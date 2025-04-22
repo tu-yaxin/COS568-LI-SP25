@@ -6,8 +6,8 @@ def result_analysis():
     tasks = ['fb']
     indexs = ['BTree', 'DynamicPGM', 'LIPP', 'HybridPGMLipp']
     # Create dictionaries to store throughput data for each index
-    lookuponly_throughput = {}
-    insertlookup_throughput = {}
+    #lookuponly_throughput = {}
+    #insertlookup_throughput = {}
     insertlookup_mix1_throughput = {}
     insertlookup_mix2_throughput = {}
     
@@ -26,21 +26,21 @@ def result_analysis():
         
         for index in indexs:
             # find the row where lookup_only_result['index_name'] == index
-            try:
+            #try:
                 #lookup_only_result = lookup_only_results[lookup_only_results['index_name'] == index]
                 # compute average throughput across lookup_only_result['throughput1'], lookup_only_result['throughput2'], lookup_only_result['throughput3'], then select the one with the highest throughput
                 #lookuponly_throughput[index][task] = lookup_only_result[['lookup_throughput_mops1', 'lookup_throughput_mops2', 'lookup_throughput_mops3']].mean(axis=1).max()
-            except:
-                pass
+            #except:
+                #pass
             
             # find the row where insert_lookup_result['index_name'] == index
-            try:
+            #try:
                 #insert_lookup_result = insert_lookup_results[insert_lookup_results['index_name'] == index]
                 # compute average throughput across insert_lookup_result['throughput1'], insert_lookup_result['throughput2'], insert_lookup_result['throughput3'], then select the one with the highest throughput
                 #insertlookup_throughput[index]['lookup'][task] = insert_lookup_result[['lookup_throughput_mops1', 'lookup_throughput_mops2', 'lookup_throughput_mops3']].mean(axis=1).max()
                 #insertlookup_throughput[index]['insert'][task] = insert_lookup_result[['insert_throughput_mops1', 'insert_throughput_mops2', 'insert_throughput_mops3']].mean(axis=1).max()
-            except:
-                pass
+            #except:
+                #pass
             
                 
             # find the row where insert_lookup_mix_1_result['index_name'] == index
