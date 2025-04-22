@@ -4,6 +4,22 @@
 #include "benchmarks/common.h"
 #include "competitors/hybrid_pgm_lipp.h"
 
+template <typename Searcher>
+void benchmark_64_hybrid_pgm_lipp(tli::Benchmark<uint64_t>& benchmark, bool pareto,
+                                const std::vector<int>& params) {
+  if (!pareto) {
+    util::fail("Hybrid PGM LIPP's hyperparameter cannot be set");
+  } else {
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 16>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 32>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 64>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 128>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 256>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 512>>();
+    benchmark.template Run<HybridPGMLipp<uint64_t, Searcher, 1024>>();
+  }
+}
+
 template <int record>
 void benchmark_64_hybrid_pgm_lipp(tli::Benchmark<uint64_t>& benchmark, const std::string& filename) {
   if (filename.find("books_100M") != std::string::npos) {

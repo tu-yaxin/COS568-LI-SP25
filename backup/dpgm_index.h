@@ -1,4 +1,4 @@
-#ifndef TLI_DYNAMIC_PGM_H
+// #ifndef TLI_DYNAMIC_PGM_H
 #define TLI_DYNAMIC_PGM_H
 
 #include <algorithm>
@@ -70,13 +70,14 @@ class DynamicPGM : public Competitor<KeyType, SearchClass> {
     return vec;
   }
 
-  std::vector<KeyValue<KeyType>> flush_erase() {//Task2: flush and clear pgm_ 
+  std::vector<KeyValue<KeyType>> get_data() {
     std::vector<KeyValue<KeyType>> data;
     data.reserve(pgm_.size_in_bytes() / sizeof(KeyValue<KeyType>));
-    for (auto& it : pgm_) {
-      data.emplace_back(KeyValue<KeyType>{it.key(), it.value()});
-      pgm_.erase(it.key());
+    for (const auto& item : pgm_) {
+      data.emplace_back(KeyValue<KeyType>{item.key(), item.value()});
+      pgm_.erase(item.key());
     }
+    // pgm_ = DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>>();
     return data;
   }
 
@@ -84,4 +85,4 @@ class DynamicPGM : public Competitor<KeyType, SearchClass> {
   DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>> pgm_;
 };
 
-#endif  // TLI_DYNAMIC_PGM_H
+// #endif  // TLI_DYNAMIC_PGM_H
