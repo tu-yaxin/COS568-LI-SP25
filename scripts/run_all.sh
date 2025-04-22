@@ -9,8 +9,8 @@ echo "=== Starting Benchmark ==="
 chmod +x scripts/*.sh
 
 # Run all steps in sequence
-echo "Step 1: Downloading dataset..."
-./scripts/download_dataset.sh
+#echo "Step 1: Downloading dataset..."
+#./scripts/download_dataset.sh
 
 # Task 2: Don't create a new CMAKE list.######
 #echo "Step 2: Creating minimal CMakeLists.txt..."
