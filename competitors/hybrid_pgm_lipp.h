@@ -41,21 +41,31 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
       }
     
 
+    // void Insert(const KeyValue<KeyType>& data, uint32_t thread_id) {
+    //     if (pgm_size >= 0.05 * total_size) {// should test different thresholds
+    //         std::cout << "000000000000000" << std::endl;
+    //         std::vector<KeyValue<KeyType>> data;
+    //         data = pgm.flush_erase();
+    //         for (auto& it: data) {//enumerate pgm
+    //             lipp.Insert(KeyValue<KeyType>{it.key, it.value}, 0);
+    //         }
+    //         std::cout << "111111111111111" << std::endl;
+    //         pgm_size = 0;
+    //     }
+    //     pgm.Insert(data, thread_id);
+    //     pgm_size++;
+    //     total_size++;
+    // }
+
     void Insert(const KeyValue<KeyType>& data, uint32_t thread_id) {
-        if (pgm_size >= 0.05 * total_size) {// should test different thresholds
-            std::cout << "000000000000000" << std::endl;
-            std::vector<KeyValue<KeyType>> data;
-            data = pgm.flush_erase();
-            for (auto& it: data) {//enumerate pgm
-                lipp.Insert(KeyValue<KeyType>{it.key, it.value}, 0);
-            }
-            std::cout << "111111111111111" << std::endl;
-            pgm_size = 0;
-        }
         pgm.Insert(data, thread_id);
         pgm_size++;
         total_size++;
-    }
+        if (pgm_size >= 0.05 * total_size) {
+          flush();
+          std::cout << "Flushing PGM to LIPP, current size: " << pgm_size << std::endl;
+        }
+      }
 
     bool applicable(bool unique, bool range_query, bool insert, bool multithread, const std::string& ops_filename) const {
         std::string name = SearchClass::name();
@@ -71,7 +81,15 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
 private:
     size_t pgm_size = 0, total_size;
-    DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>> pgm_;
+    void flush() {//backup
+        std::vector<KeyValue<KeyType>> data;
+        data = pgm.get_data();
+        for (const auto& kv : data) {
+          lipp.Insert(KeyValue<KeyType>{kv.key, kv.value}, 0);
+        }
+        pgm_size = 0;
+      }
+    //DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>> pgm_;
 };
 
 #endif  // TLI_DYNAMIC_PGM_H

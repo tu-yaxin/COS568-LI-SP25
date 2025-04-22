@@ -70,15 +70,25 @@ class DynamicPGM : public Competitor<KeyType, SearchClass> {
     return vec;
   }
 
-  std::vector<KeyValue<KeyType>> flush_erase() {//Task2: flush and clear pgm_ 
-    std::cout << "fffffffffffffffffffff" << std::endl;
+  // std::vector<KeyValue<KeyType>> flush_erase() {//Task2: flush and clear pgm_ 
+  //   std::cout << "fffffffffffffffffffff" << std::endl;
+  //   std::vector<KeyValue<KeyType>> data;
+  //   data.reserve(pgm_.size_in_bytes() / sizeof(KeyValue<KeyType>));
+  //   for (auto& it : pgm_) {
+  //     data.emplace_back(KeyValue<KeyType>{it.key(), it.value()});
+  //     pgm_.erase(it.key());
+  //   }
+  //   std::cout << "eeeeeeeeeeeeeeeeeee" << std::endl;
+  //   return data;
+  // }
+  std::vector<KeyValue<KeyType>> get_data() {
     std::vector<KeyValue<KeyType>> data;
     data.reserve(pgm_.size_in_bytes() / sizeof(KeyValue<KeyType>));
-    for (auto& it : pgm_) {
-      data.emplace_back(KeyValue<KeyType>{it.key(), it.value()});
-      pgm_.erase(it.key());
+    for (const auto& item : pgm_) {
+      data.emplace_back(KeyValue<KeyType>{item.key(), item.value()});
+      pgm_.erase(item.key());
     }
-    std::cout << "eeeeeeeeeeeeeeeeeee" << std::endl;
+    // pgm_ = DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>>();
     return data;
   }
 
