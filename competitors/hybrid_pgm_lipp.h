@@ -82,55 +82,55 @@ private:
 #endif  // TLI_DYNAMIC_PGM_H
 
 
-#pragma once
+// #pragma once
 
-#include <algorithm>
-#include <cstdlib>
-#include <iostream>
-#include <vector>
+// #include <algorithm>
+// #include <cstdlib>
+// #include <iostream>
+// #include <vector>
 
-#include "../util.h"
-#include "dynamic_pgm_index.h"    // ← use the official wrapper
-#include "lipp.h"
+// #include "../util.h"
+// #include "dynamic_pgm_index.h"    // ← use the official wrapper
+// #include "lipp.h"
 
-template<class KeyType, class SearchClass, size_t pgm_error>
-class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
-public:
-  HybridPGMLipp(const std::vector<int>& params)
-    : params_(params),
-      pgm_(params),
-      lipp_(params),
-      flush_threshold_( params.size()>1 ? params[1] : 100000 )
-  {
-    buffer.reserve(flush_threshold_);
-  }
+// template<class KeyType, class SearchClass, size_t pgm_error>
+// class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
+// public:
+//   HybridPGMLipp(const std::vector<int>& params)
+//     : params_(params),
+//       pgm_(params),
+//       lipp_(params),
+//       flush_threshold_( params.size()>1 ? params[1] : 100000 )
+//   {
+//     buffer.reserve(flush_threshold_);
+//   }
 
-  uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t t) {
-    buffer.clear();
-    pgm_ = decltype(pgm_)(params_);         // reset PGM
-    return lipp_.Build(data, t);            // bulk‐load LIPP
-  }
+//   uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t t) {
+//     buffer.clear();
+//     pgm_ = decltype(pgm_)(params_);         // reset PGM
+//     return lipp_.Build(data, t);            // bulk‐load LIPP
+//   }
 
-  void Insert(const KeyValue<KeyType>& kv, uint32_t tid) {
-    pgm_.Insert(kv, tid);                   // keep PGM “warm”
-    buffer.push_back(kv);                  // and record it
+//   void Insert(const KeyValue<KeyType>& kv, uint32_t tid) {
+//     pgm_.Insert(kv, tid);                   // keep PGM “warm”
+//     buffer.push_back(kv);                  // and record it
 
-    if (buffer.size() >= flush_threshold_) {
-      // NAIVELY re‐insert everything into LIPP
-      for (auto &b : buffer) {
-        lipp_.Insert(b, tid);
-      }
-      buffer.clear();
-      pgm_ = decltype(pgm_)(params_);       // empty the PGM
-    }
-  }
+//     if (buffer.size() >= flush_threshold_) {
+//       // NAIVELY re‐insert everything into LIPP
+//       for (auto &b : buffer) {
+//         lipp_.Insert(b, tid);
+//       }
+//       buffer.clear();
+//       pgm_ = decltype(pgm_)(params_);       // empty the PGM
+//     }
+//   }
 
-  // lookup/range/applicable/name/variants/size stay exactly as before…
-private:
-  std::vector<int> params_;
-  size_t flush_threshold_;
-  std::vector<KeyValue<KeyType>> buffer;
-  DynamicPGM<KeyType, SearchClass, pgm_error> pgm_;  // official wrapper
-  Lipp<KeyType>                      lipp_;
-};
+//   // lookup/range/applicable/name/variants/size stay exactly as before…
+// private:
+//   std::vector<int> params_;
+//   size_t flush_threshold_;
+//   std::vector<KeyValue<KeyType>> buffer;
+//   DynamicPGM<KeyType, SearchClass, pgm_error> pgm_;  // official wrapper
+//   Lipp<KeyType>                      lipp_;
+// };
 
