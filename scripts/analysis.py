@@ -4,18 +4,22 @@ import pandas as pd
 def result_analysis():
     #Task 2 neglected: tasks = ['fb', 'osmc', 'books']
     tasks = ['fb']
-    indexs = ['BTree', 'DynamicPGM', 'LIPP', 'HybridPGMLipp']
+    indexs = ['DynamicPGM', 'LIPP', 'HybridPGMLipp']
     # Create dictionaries to store throughput data for each index
     #lookuponly_throughput = {}
     #insertlookup_throughput = {}
     insertlookup_mix1_throughput = {}
     insertlookup_mix2_throughput = {}
+    index_size_bytes_mix1 = {}
+    index_size_bytes_mix2 = {}
     
     for index in indexs:
         #lookuponly_throughput[index] = {}
         #insertlookup_throughput[index] = {"lookup": {}, "insert": {}}
         insertlookup_mix1_throughput[index] = {}
         insertlookup_mix2_throughput[index] = {}
+        index_size_bytes_mix1[index] = {}
+        index_size_bytes_mix2[index] = {}
     
     for task in tasks:
         full_task_name = f"{task}_100M_public_uint64"
@@ -23,6 +27,8 @@ def result_analysis():
         #insert_lookup_results = pd.read_csv(f"results/{full_task_name}_ops_2M_0.000000rq_0.500000nl_0.500000i_0m_results_table.csv")
         insert_lookup_mix_1_results = pd.read_csv(f"results/{full_task_name}_ops_2M_0.000000rq_0.500000nl_0.100000i_0m_mix_results_table.csv")
         insert_lookup_mix_2_results = pd.read_csv(f"results/{full_task_name}_ops_2M_0.000000rq_0.500000nl_0.900000i_0m_mix_results_table.csv")
+        index_size_byte_mix_1_results = pd.read_csv(f"results/{full_task_name}_ops_2M_0.000000rq_0.500000nl_0.100000i_0m_mix_results_table.csv")
+        index_size_byte_mix_2_results = pd.read_csv(f"results/{full_task_name}_ops_2M_0.000000rq_0.500000nl_0.900000i_0m_mix_results_table.csv")
         
         for index in indexs:
             # find the row where lookup_only_result['index_name'] == index
@@ -46,8 +52,10 @@ def result_analysis():
             # find the row where insert_lookup_mix_1_result['index_name'] == index
             try:
                 insert_lookup_mix_1_result = insert_lookup_mix_1_results[insert_lookup_mix_1_results['index_name'] == index]
+                index_size_byte_mix_1_result = index_size_byte_mix_1_results[index_size_byte_mix_1_results['index_name'] == index]
                 # compute average throughput across insert_lookup_mix_1_result['throughput1'], insert_lookup_mix_1_result['throughput2'], insert_lookup_mix_1_result['throughput3'], then select the one with the highest throughput
                 insertlookup_mix1_throughput[index][task] = insert_lookup_mix_1_result[['mixed_throughput_mops1', 'mixed_throughput_mops2', 'mixed_throughput_mops3']].mean(axis=1).max()
+                index_size_bytes_mix1[index][task] = index_size_byte_mix_1_result[['index_size_bytes']].mean(axis=1).max()
             except:
                 pass
             
@@ -55,8 +63,10 @@ def result_analysis():
             # find the row where insert_lookup_mix_2_result['index_name'] == index
             try:
                 insert_lookup_mix_2_result = insert_lookup_mix_2_results[insert_lookup_mix_2_results['index_name'] == index]
+                index_size_byte_mix_2_result = index_size_byte_mix_2_results[index_size_byte_mix_2_results['index_name'] == index]
+                # compute average through
                 # compute average throughput across insert_lookup_mix_2_result['throughput1'], insert_lookup_mix_2_result['throughput2'], insert_lookup_mix_2_result['throughput3'], then select the one with the highest throughput
-                insertlookup_mix2_throughput[index][task] = insert_lookup_mix_2_result[['mixed_throughput_mops1', 'mixed_throughput_mops2', 'mixed_throughput_mops3']].mean(axis=1).max()
+                index_size_bytes_mix1[index][task] = index_size_byte_mix_1_result[['index_size_bytes']].mean(axis=1).max()
             except:
                 pass
     # plot the figure of throughput, x axis is the index, y axis is the throughput
@@ -116,8 +126,8 @@ def result_analysis():
     # ax.set_xticklabels(indexs)
     # ax.legend()
     
-    # 3. Plot mixed workload with 10% inserts
-    ax = axs[2]
+    # 1. Plot mixed workload with 10% inserts, throughput
+    ax = axs[0]
     for i, task in enumerate(tasks):
         task_data = []
         for idx in indexs:
@@ -130,12 +140,40 @@ def result_analysis():
     ax.set_xticklabels(indexs)
     ax.legend()
     
-    # 4. Plot mixed workload with 90% inserts
-    ax = axs[3]
+    # 2. Plot mixed workload with 90% inserts, throughput
+    ax = axs[1]
     for i, task in enumerate(tasks):
         task_data = []
         for idx in indexs:
             task_data.append(insertlookup_mix2_throughput[idx].get(task, 0))
+        ax.bar([x + i*bar_width for x in index], task_data, bar_width, label=task, color=colors[i])
+        
+    ax.set_title('Mixed Workload (90% insert ratio)')
+    ax.set_ylabel('Throughput (Mops/s)')
+    ax.set_xticks([x + bar_width*1.5 for x in index])
+    ax.set_xticklabels(indexs)
+    ax.legend()
+
+    # 3. Plot mixed workload with 10% inserts, index size
+    ax = axs[0]
+    for i, task in enumerate(tasks):
+        task_data = []
+        for idx in indexs:
+            task_data.append(index_size_bytes_mix1[idx].get(task, 0))
+        ax.bar([x + i*bar_width for x in index], task_data, bar_width, label=task, color=colors[i])
+        
+    ax.set_title('Mixed Workload (10% insert ratio)')
+    ax.set_ylabel('Throughput (Mops/s)')
+    ax.set_xticks([x + bar_width*1.5 for x in index])
+    ax.set_xticklabels(indexs)
+    ax.legend()
+    
+    # 4. Plot mixed workload with 90% inserts, index size
+    ax = axs[1]
+    for i, task in enumerate(tasks):
+        task_data = []
+        for idx in indexs:
+            task_data.append(index_size_bytes_mix2[idx].get(task, 0))
         ax.bar([x + i*bar_width for x in index], task_data, bar_width, label=task, color=colors[i])
         
     ax.set_title('Mixed Workload (90% insert ratio)')
