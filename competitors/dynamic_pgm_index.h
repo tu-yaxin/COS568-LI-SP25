@@ -71,12 +71,14 @@ class DynamicPGM : public Competitor<KeyType, SearchClass> {
   }
 
   std::vector<KeyValue<KeyType>> flush_erase() {//Task2: flush and clear pgm_ 
+    std::cout << "fffffffffffffffffffff" << std::endl;
     std::vector<KeyValue<KeyType>> data;
     data.reserve(pgm_.size_in_bytes() / sizeof(KeyValue<KeyType>));
     for (auto& it : pgm_) {
       data.emplace_back(KeyValue<KeyType>{it.key(), it.value()});
       pgm_.erase(it.key());
     }
+    std::cout << "eeeeeeeeeeeeeeeeeee" << std::endl;
     return data;
   }
 

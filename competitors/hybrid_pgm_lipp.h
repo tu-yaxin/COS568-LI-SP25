@@ -43,11 +43,13 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
     void Insert(const KeyValue<KeyType>& data, uint32_t thread_id) {
         if (pgm_size >= 0.05 * total_size) {// should test different thresholds
+            std::cout << "000000000000000" << std::endl;
             std::vector<KeyValue<KeyType>> data;
             data = pgm.flush_erase();
             for (auto& it: data) {//enumerate pgm
                 lipp.Insert(KeyValue<KeyType>{it.key, it.value}, 0);
             }
+            std::cout << "111111111111111" << std::endl;
             pgm_size = 0;
         }
         pgm.Insert(data, thread_id);
