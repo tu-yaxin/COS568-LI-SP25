@@ -21,6 +21,9 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
         uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t num_threads) {
             total_size = data.size();
+            buffer.reserve(0.05 * total_size);
+            buffer.clear();
+            pgm = decltype(pgm)(params);  //empty pgm
             uint64_t build_time_lipp = lipp.Build(data, num_threads);
 
             return build_time_lipp;
@@ -40,32 +43,24 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
         return result;
       }
     
-
-    // void Insert(const KeyValue<KeyType>& data, uint32_t thread_id) {
-    //     if (pgm_size >= 0.05 * total_size) {// should test different thresholds
-    //         std::cout << "000000000000000" << std::endl;
-    //         std::vector<KeyValue<KeyType>> data;
-    //         data = pgm.flush_erase();
-    //         for (auto& it: data) {//enumerate pgm
-    //             lipp.Insert(KeyValue<KeyType>{it.key, it.value}, 0);
-    //         }
-    //         std::cout << "111111111111111" << std::endl;
-    //         pgm_size = 0;
-    //     }
-    //     pgm.Insert(data, thread_id);
-    //     pgm_size++;
-    //     total_size++;
-    // }
-
     void Insert(const KeyValue<KeyType>& data, uint32_t thread_id) {
         pgm.Insert(data, thread_id);
+        buffer.push_back(data);
         pgm_size++;
         total_size++;
-        if (pgm_size >= 0.05 * total_size) {
-          flush();
-          std::cout << "Flushing PGM to LIPP, current size: " << pgm_size << std::endl;
+        if (pgm_size >= 0.05 * total_size) {// should test different thresholds
+            std::cout << "000000000000000" << std::endl;
+            //std::vector<KeyValue<KeyType>> data;
+            //data = pgm.flush_erase();
+            for (auto& it: buffer) {//enumerate same pgm list
+                lipp.Insert(it, thread_id);
+            }
+            std::cout << "111111111111111" << std::endl;
+            buffer.clear();
+            pgm = decltype(pgm)(params); 
+            pgm_size = 0;
         }
-      }
+    }
 
     bool applicable(bool unique, bool range_query, bool insert, bool multithread, const std::string& ops_filename) const {
         std::string name = SearchClass::name();
@@ -81,15 +76,61 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
 private:
     size_t pgm_size = 0, total_size;
-    void flush() {//backup
-        std::vector<KeyValue<KeyType>> data;
-        data = pgm.get_data();
-        for (const auto& kv : data) {
-          lipp.Insert(KeyValue<KeyType>{kv.key, kv.value}, 0);
-        }
-        pgm_size = 0;
-      }
-    //DynamicPGMIndex<KeyType, uint64_t, SearchClass, PGMIndex<KeyType, SearchClass, pgm_error, 16>> pgm_;
+    std::vector<KeyValue<KeyType>> buffer;
 };
 
 #endif  // TLI_DYNAMIC_PGM_H
+
+
+#pragma once
+
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+#include "../util.h"
+#include "dynamic_pgm_index.h"    // ← use the official wrapper
+#include "lipp.h"
+
+template<class KeyType, class SearchClass, size_t pgm_error>
+class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
+public:
+  HybridPGMLipp(const std::vector<int>& params)
+    : params_(params),
+      pgm_(params),
+      lipp_(params),
+      flush_threshold_( params.size()>1 ? params[1] : 100000 )
+  {
+    buffer.reserve(flush_threshold_);
+  }
+
+  uint64_t Build(const std::vector<KeyValue<KeyType>>& data, size_t t) {
+    buffer.clear();
+    pgm_ = decltype(pgm_)(params_);         // reset PGM
+    return lipp_.Build(data, t);            // bulk‐load LIPP
+  }
+
+  void Insert(const KeyValue<KeyType>& kv, uint32_t tid) {
+    pgm_.Insert(kv, tid);                   // keep PGM “warm”
+    buffer.push_back(kv);                  // and record it
+
+    if (buffer.size() >= flush_threshold_) {
+      // NAIVELY re‐insert everything into LIPP
+      for (auto &b : buffer) {
+        lipp_.Insert(b, tid);
+      }
+      buffer.clear();
+      pgm_ = decltype(pgm_)(params_);       // empty the PGM
+    }
+  }
+
+  // lookup/range/applicable/name/variants/size stay exactly as before…
+private:
+  std::vector<int> params_;
+  size_t flush_threshold_;
+  std::vector<KeyValue<KeyType>> buffer;
+  DynamicPGM<KeyType, SearchClass, pgm_error> pgm_;  // official wrapper
+  Lipp<KeyType>                      lipp_;
+};
+
