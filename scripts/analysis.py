@@ -155,7 +155,7 @@ def result_analysis():
     ax.legend()
 
     # 3. Plot mixed workload with 10% inserts, index size
-    ax = axs[0]
+    ax = axs[2]
     for i, task in enumerate(tasks):
         task_data = []
         for idx in indexs:
@@ -163,13 +163,13 @@ def result_analysis():
         ax.bar([x + i*bar_width for x in index], task_data, bar_width, label=task, color=colors[i])
         
     ax.set_title('Mixed Workload (10% insert ratio)')
-    ax.set_ylabel('Throughput (Mops/s)')
+    ax.set_ylabel('Index size (bytes)')
     ax.set_xticks([x + bar_width*1.5 for x in index])
     ax.set_xticklabels(indexs)
     ax.legend()
     
     # 4. Plot mixed workload with 90% inserts, index size
-    ax = axs[1]
+    ax = axs[3]
     for i, task in enumerate(tasks):
         task_data = []
         for idx in indexs:
@@ -177,7 +177,7 @@ def result_analysis():
         ax.bar([x + i*bar_width for x in index], task_data, bar_width, label=task, color=colors[i])
         
     ax.set_title('Mixed Workload (90% insert ratio)')
-    ax.set_ylabel('Throughput (Mops/s)')
+    ax.set_ylabel('Index size (bytes)')
     ax.set_xticks([x + bar_width*1.5 for x in index])
     ax.set_xticklabels(indexs)
     ax.legend()
