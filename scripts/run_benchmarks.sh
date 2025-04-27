@@ -24,7 +24,7 @@ mkdir -p ./results
 
 for DATA in fb_100M_public_uint64 #books_100M_public_uint64 osmc_100M_public_uint64 ### Task 2 neglected
 do
-for INDEX in LIPP #DynamicPGM LIPP HybridPGMLipp # BTree Task 2 neglected
+for INDEX in LIPP DynamicPGM HybridPGMLipp # BTree Task 2 neglected
 do
     execute_uint64_100M ${DATA} $INDEX
 done

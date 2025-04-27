@@ -49,13 +49,13 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
         pgm_size++;
         total_size++;
         if (pgm_size >= 0.05 * total_size) {// should test different thresholds
-            std::cout << "000000000000000" << std::endl;
+            //std::cout << "000000000000000" << std::endl;
             //std::vector<KeyValue<KeyType>> data;
             //data = pgm.flush_erase();
             for (auto& it: buffer) {//enumerate same pgm list
                 lipp.Insert(it, thread_id);
             }
-            std::cout << "111111111111111" << std::endl;
+            //std::cout << "111111111111111" << std::endl;
             buffer.clear();
             pgm = decltype(pgm)(params_); 
             pgm_size = 0;
@@ -73,6 +73,8 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
         vec.push_back(std::to_string(pgm_error));
         return vec;
     }
+
+    std::string name() const { return "HybridPGMLipp"; }
 
 private:
     size_t pgm_size = 0, total_size;
@@ -113,7 +115,7 @@ private:
 //   }
 
 //   void Insert(const KeyValue<KeyType>& kv, uint32_t tid) {
-//     pgm_.Insert(kv, tid);                   // keep PGM “warm”
+//     pgm_.Insert(kv, tid);                   // keep PGM "warm"
 //     buffer.push_back(kv);                  // and record it
 
 //     if (buffer.size() >= flush_threshold_) {
