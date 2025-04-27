@@ -76,6 +76,8 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
     std::string name() const { return "HybridPGMLipp"; }
 
+    std::size_t size() const { return pgm.size() + lipp.size(); }
+
 private:
     size_t pgm_size = 0, total_size;
     std::vector<int> params_;
