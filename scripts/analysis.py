@@ -3,7 +3,7 @@ import pandas as pd
 
 def result_analysis():
     #Task 2 neglected: tasks = ['fb', 'osmc', 'books']
-    tasks = ['fb']
+    tasks = ['fb', 'osmc', 'books']
     indexs = ['DynamicPGM', 'LIPP', 'HybridPGMLipp']
     # Create dictionaries to store throughput data for each index
     #lookuponly_throughput = {}
