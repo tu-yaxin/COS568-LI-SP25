@@ -31,9 +31,9 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
 
     size_t EqualityLookup(const KeyType& lookup_key, uint32_t thread_id) const {
         uint64_t value;
-        value = pgm.EqualityLookup(lookup_key, thread_id);
-        if (value == util::OVERFLOW){
-            value = lipp.EqualityLookup(lookup_key, thread_id);
+        value = lipp.EqualityLookup(lookup_key, thread_id);
+        if (value == util::NOT_FOUND){
+            value = pgm.EqualityLookup(lookup_key, thread_id);
         } 
         return value;
     }
@@ -48,14 +48,10 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
         buffer.push_back(data);
         pgm_size++;
         total_size++;
-        if (pgm_size >= 0.05 * total_size) {// should test different thresholds
-            //std::cout << "000000000000000" << std::endl;
-            //std::vector<KeyValue<KeyType>> data;
-            //data = pgm.flush_erase();
-            for (auto& it: buffer) {//enumerate same pgm list
+        if (pgm_size >= 0.05 * total_size) {
+            for (auto& it: buffer) {
                 lipp.Insert(it, thread_id);
             }
-            //std::cout << "111111111111111" << std::endl;
             buffer.clear();
             pgm = decltype(pgm)(params_); 
             pgm_size = 0;
