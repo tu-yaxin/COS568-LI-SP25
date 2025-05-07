@@ -107,10 +107,7 @@ class HybridPGMLipp : public Competitor<KeyType, SearchClass> {
             std::vector<std::string> vec;
             vec.push_back(SearchClass::name());
             vec.push_back(std::to_string(pgm_error));
-            vec.push_back(std::to_string(static_cast<int>(config.buffer_ratio * 100)));
-            vec.push_back(std::to_string(config.min_flush_size));
-            vec.push_back(std::to_string(config.max_flush_size));
-            vec.push_back(config.async_flush ? "async" : "sync");
+            // Maintain backward compatibility by only returning the original two parameters
             return vec;
         }
 
